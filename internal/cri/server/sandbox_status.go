@@ -36,9 +36,13 @@ func (c *criService) PodSandboxStatus(ctx context.Context, r *runtime.PodSandbox
 		return nil, fmt.Errorf("an error occurred when try to find sandbox: %w", err)
 	}
 
-	ip, additionalIPs, err := c.getIPs(sandbox)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get sandbox ip: %w", err)
+	ip := ""
+	additionalIPs := []string{}
+	if !c.config.CniConfig.DisableCNI || hostNetwork(sandbox.Config) {
+		ip, additionalIPs, err = c.getIPs(sandbox)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get sandbox ip: %w", err)
+		}
 	}
 
 	var (

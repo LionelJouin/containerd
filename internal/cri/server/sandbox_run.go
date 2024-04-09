@@ -433,6 +433,10 @@ func (c *criService) getNetworkPlugin(runtimeClass string) cni.CNI {
 
 // setupPodNetwork setups up the network for a pod
 func (c *criService) setupPodNetwork(ctx context.Context, sandbox *sandboxstore.Sandbox) error {
+	if c.config.CniConfig.DisableCNI && !hostNetwork(sandbox.Config) {
+		return nil
+	}
+
 	var (
 		id        = sandbox.ID
 		config    = sandbox.Config
