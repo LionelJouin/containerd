@@ -318,6 +318,11 @@ func getProcessState(ctx context.Context, p runtime.Process) (*task.Process, err
 			return nil, err
 		}
 		log.G(ctx).WithError(err).Errorf("get state for %s", p.ID())
+		log.G(ctx).WithField("state.ExitStatus", state.ExitStatus).Warn("koukou")
+		log.G(ctx).WithField("state.Status", state.Status).Warn("koukou")
+		log.G(ctx).WithField("state.Stderr", state.Stderr).Warn("koukou")
+		log.G(ctx).WithField("state.Stdin", state.Stdin).Warn("koukou")
+		log.G(ctx).WithField("state.Stdout", state.Stdout).Warn("koukou")
 	}
 	status := task.Status_UNKNOWN
 	switch state.Status {
