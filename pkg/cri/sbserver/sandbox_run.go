@@ -375,12 +375,29 @@ func (c *criService) setupPodNetwork(ctx context.Context, sandbox *sandboxstore.
 	}
 	logDebugCNIResult(ctx, id, result)
 	// Check if the default interface has IP config
-	if configs, ok := result.Interfaces[defaultIfName]; ok && len(configs.IPConfigs) > 0 {
-		sandbox.IP, sandbox.AdditionalIPs = selectPodIPs(ctx, configs.IPConfigs, c.config.IPPreference)
-		sandbox.CNIResult = result
-		return nil
+	configs, ok := result.Interfaces[defaultIfName]
+	if !ok || len(configs.IPConfigs) == 0 {
+		return fmt.Errorf("failed to find network info for sandbox %q", id)
 	}
-	return fmt.Errorf("failed to find network info for sandbox %q", id)
+
+	sandbox.IP, sandbox.AdditionalIPs = selectPodIPs(ctx, configs.IPConfigs, c.config.IPPreference)
+	sandbox.CNIResult = result
+
+	if c.config.CniConfig.CNIDRA {
+		err = c.cni.AttachNetworks(
+			ctx,
+			sandbox.ID,
+			sandbox.Config.GetMetadata().GetUid(),
+			sandbox.Config.GetMetadata().GetName(),
+			sandbox.Config.GetMetadata().GetNamespace(),
+			path,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to attach networks for sandbox %q", id)
+		}
+	}
+
+	return nil
 }
 
 // cniNamespaceOpts get CNI namespace options from sandbox config.

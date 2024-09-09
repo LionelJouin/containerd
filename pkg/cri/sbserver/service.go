@@ -17,6 +17,7 @@
 package sbserver
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -54,6 +55,11 @@ import (
 	ctrdutil "github.com/containerd/containerd/pkg/cri/util"
 	osinterface "github.com/containerd/containerd/pkg/os"
 	"github.com/containerd/containerd/pkg/registrar"
+	cniv1 "github.com/kubernetes-sigs/multi-network/pkg/cni/v1"
+	"github.com/kubernetes-sigs/multi-network/pkg/dra"
+	"github.com/kubernetes-sigs/multi-network/pkg/store"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 // defaultNetworkPlugin is used for the default CNI configuration
@@ -126,6 +132,8 @@ type criService struct {
 	nri *nri.API
 	// warn is used to emit warnings for cri-api v1alpha2 usage.
 	warn warning.Service
+
+	cni *cniv1.CNI
 }
 
 // NewCRIService returns a new instance of CRIService
@@ -288,6 +296,44 @@ func (c *criService) Run(ready func()) error {
 
 	// Set the server as initialized. GRPC services could start serving traffic.
 	c.initialized.Set()
+
+	if c.config.CniConfig.CNIDRA {
+		clientCfg, err := rest.InClusterConfig()
+		if err != nil {
+			return fmt.Errorf("failed to InClusterConfig: %w", err)
+		}
+
+		clientset, err := kubernetes.NewForConfig(clientCfg)
+		if err != nil {
+			return fmt.Errorf("failed to NewForConfig: %w", err)
+		}
+
+		driverName := "poc.dra.networking"
+		nodeName, _ := os.Hostname()
+
+		memoryStore := store.NewMemory()
+
+		_, err = dra.Start(
+			context.TODO(),
+			driverName,
+			nodeName,
+			clientset,
+			memoryStore,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to dra.Start: %w", err)
+		}
+
+		c.cni = cniv1.New(
+			driverName,
+			"/",
+			[]string{"/opt/cni/bin"},
+			"/var/lib/cni/multi-network",
+			clientset,
+			memoryStore,
+		)
+	}
+
 	ready()
 
 	var eventMonitorErr, streamServerErr, cniNetConfMonitorErr error
