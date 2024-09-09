@@ -258,31 +258,38 @@ func NewCRIService(options *CRIServiceOptions) (CRIService, runtime.RuntimeServi
 		SupplementalGroupsPolicy: true,
 	}
 
+	log.L.Warn("Koukou A")
 	if c.config.CniConfig.CNIDRA {
+		log.L.Warn("Koukou B")
 		clientCfg, err := rest.InClusterConfig()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to InClusterConfig: %v\n", err)
-			os.Exit(1)
+			return nil, nil, fmt.Errorf("failed to InClusterConfig: %w", err)
 		}
 
+		log.L.Warn("Koukou C")
 		clientset, err := kubernetes.NewForConfig(clientCfg)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to NewForConfig: %v\n", err)
-			os.Exit(1)
+			return nil, nil, fmt.Errorf("failed to NewForConfig: %w", err)
 		}
 
+		log.L.Warn("Koukou D")
 		driverName := "poc.dra.networking"
 		nodeName, _ := os.Hostname()
 
 		memoryStore := store.NewMemory()
 
-		dra.Start(
+		_, err = dra.Start(
 			ctx,
 			driverName,
 			nodeName,
 			clientset,
 			memoryStore,
 		)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to dra.Start: %w", err)
+		}
+
+		log.L.Warn("Koukou E")
 
 		c.cni = cniv1.New(
 			driverName,
