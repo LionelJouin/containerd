@@ -138,7 +138,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.3.1 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611 // indirect
+	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/term v0.23.0 // indirect
@@ -159,3 +159,63 @@ require (
 )
 
 replace github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7
+
+replace k8s.io/api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/api v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apiextensions-apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apiextensions-apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apimachinery => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apimachinery v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cli-runtime => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cli-runtime v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/client-go => github.com/LionelJouin/kubernetes/staging/src/k8s.io/client-go v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cloud-provider => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cloud-provider v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cluster-bootstrap => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cluster-bootstrap v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/code-generator => github.com/LionelJouin/kubernetes/staging/src/k8s.io/code-generator v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/component-base => github.com/LionelJouin/kubernetes/staging/src/k8s.io/component-base v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/component-helpers => github.com/LionelJouin/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/controller-manager => github.com/LionelJouin/kubernetes/staging/src/k8s.io/controller-manager v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cri-api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cri-client => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cri-client v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/csi-translation-lib => github.com/LionelJouin/kubernetes/staging/src/k8s.io/csi-translation-lib v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/dynamic-resource-allocation => github.com/LionelJouin/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/endpointslice => github.com/LionelJouin/kubernetes/staging/src/k8s.io/endpointslice v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kms => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kms v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-aggregator => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-aggregator v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-controller-manager => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-controller-manager v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-proxy => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-proxy v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-scheduler => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-scheduler v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kubectl => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubectl v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kubelet => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubelet v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/metrics => github.com/LionelJouin/kubernetes/staging/src/k8s.io/metrics v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/mount-utils => github.com/LionelJouin/kubernetes/staging/src/k8s.io/mount-utils v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/pod-security-admission => github.com/LionelJouin/kubernetes/staging/src/k8s.io/pod-security-admission v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-cli-plugin => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-cli-plugin v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-controller => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-controller v0.0.0-20240906134808-d45448c4d371
