@@ -258,39 +258,41 @@ func NewCRIService(options *CRIServiceOptions) (CRIService, runtime.RuntimeServi
 		SupplementalGroupsPolicy: true,
 	}
 
-	clientCfg, err := rest.InClusterConfig()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to InClusterConfig: %v\n", err)
-		os.Exit(1)
+	if c.config.CniConfig.CNIDRA {
+		clientCfg, err := rest.InClusterConfig()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to InClusterConfig: %v\n", err)
+			os.Exit(1)
+		}
+
+		clientset, err := kubernetes.NewForConfig(clientCfg)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to NewForConfig: %v\n", err)
+			os.Exit(1)
+		}
+
+		driverName := "poc.dra.networking"
+		nodeName, _ := os.Hostname()
+
+		memoryStore := store.NewMemory()
+
+		dra.Start(
+			ctx,
+			driverName,
+			nodeName,
+			clientset,
+			memoryStore,
+		)
+
+		c.cni = cniv1.New(
+			driverName,
+			"/",
+			[]string{"/opt/cni/bin"},
+			"/var/lib/cni/multi-network",
+			clientset,
+			memoryStore,
+		)
 	}
-
-	clientset, err := kubernetes.NewForConfig(clientCfg)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to NewForConfig: %v\n", err)
-		os.Exit(1)
-	}
-
-	driverName := "poc.dra.networking"
-	nodeName, _ := os.Hostname()
-
-	memoryStore := store.NewMemory()
-
-	dra.Start(
-		ctx,
-		driverName,
-		nodeName,
-		clientset,
-		memoryStore,
-	)
-
-	c.cni = cniv1.New(
-		driverName,
-		"/",
-		[]string{"/opt/cni/bin"},
-		"/var/lib/cni/multi-network",
-		clientset,
-		memoryStore,
-	)
 
 	return c, c, nil
 }

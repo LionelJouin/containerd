@@ -501,16 +501,18 @@ func (c *criService) setupPodNetwork(ctx context.Context, sandbox *sandboxstore.
 	sandbox.IP, sandbox.AdditionalIPs = selectPodIPs(ctx, configs.IPConfigs, c.config.IPPreference)
 	sandbox.CNIResult = result
 
-	err = c.cni.AttachNetworks(
-		ctx,
-		sandbox.ID,
-		sandbox.Config.GetMetadata().GetUid(),
-		sandbox.Config.GetMetadata().GetName(),
-		sandbox.Config.GetMetadata().GetNamespace(),
-		path,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to attach networks for sandbox %q", id)
+	if c.config.CniConfig.CNIDRA {
+		err = c.cni.AttachNetworks(
+			ctx,
+			sandbox.ID,
+			sandbox.Config.GetMetadata().GetUid(),
+			sandbox.Config.GetMetadata().GetName(),
+			sandbox.Config.GetMetadata().GetNamespace(),
+			path,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to attach networks for sandbox %q", id)
+		}
 	}
 
 	return nil
