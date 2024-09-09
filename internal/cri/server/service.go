@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"slices"
 	"sync"
 	"sync/atomic"
@@ -56,6 +57,11 @@ import (
 	"github.com/containerd/containerd/v2/pkg/oci"
 	osinterface "github.com/containerd/containerd/v2/pkg/os"
 	"github.com/containerd/containerd/v2/plugins"
+	cniv1 "github.com/kubernetes-sigs/multi-network/pkg/cni/v1"
+	"github.com/kubernetes-sigs/multi-network/pkg/dra"
+	"github.com/kubernetes-sigs/multi-network/pkg/store"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var kernelSupportsRRO bool
@@ -158,6 +164,8 @@ type criService struct {
 	runtimeHandlers []*runtime.RuntimeHandler
 	// runtimeFeatures container runtime features info
 	runtimeFeatures *runtime.RuntimeFeatures
+
+	cni *cniv1.CNI
 }
 
 type CRIServiceOptions struct {
@@ -249,6 +257,40 @@ func NewCRIService(options *CRIServiceOptions) (CRIService, runtime.RuntimeServi
 	c.runtimeFeatures = &runtime.RuntimeFeatures{
 		SupplementalGroupsPolicy: true,
 	}
+
+	clientCfg, err := rest.InClusterConfig()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to InClusterConfig: %v\n", err)
+		os.Exit(1)
+	}
+
+	clientset, err := kubernetes.NewForConfig(clientCfg)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to NewForConfig: %v\n", err)
+		os.Exit(1)
+	}
+
+	driverName := "poc.dra.networking"
+	nodeName, _ := os.Hostname()
+
+	memoryStore := store.NewMemory()
+
+	dra.Start(
+		ctx,
+		driverName,
+		nodeName,
+		clientset,
+		memoryStore,
+	)
+
+	c.cni = cniv1.New(
+		driverName,
+		"/",
+		[]string{"/opt/cni/bin"},
+		"/var/lib/cni/multi-network",
+		clientset,
+		memoryStore,
+	)
 
 	return c, c, nil
 }
