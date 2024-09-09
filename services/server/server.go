@@ -216,6 +216,10 @@ func New(ctx context.Context, config *srvconfig.Config) (*Server, error) {
 	for _, r := range config.RequiredPlugins {
 		required[r] = struct{}{}
 	}
+	log.G(ctx).Infof("KOUKOU 1D")
+	log.G(ctx).Info("KOUKOU 1")
+	log.G(context.Background()).Info("KOUKOU 1a")
+	fmt.Println("KOUKOU 1b")
 	for _, p := range plugins {
 		id := p.URI()
 		reqID := id

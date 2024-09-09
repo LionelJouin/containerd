@@ -39,6 +39,7 @@ import (
 	"github.com/containerd/containerd/services/warning"
 	runtime_alpha "github.com/containerd/containerd/third_party/k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 	cni "github.com/containerd/go-cni"
+	"github.com/containerd/log"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	runtime "k8s.io/cri-api/pkg/apis/runtime/v1"
@@ -58,7 +59,7 @@ import (
 	"github.com/kubernetes-sigs/multi-network/pkg/dra"
 	"github.com/kubernetes-sigs/multi-network/pkg/store"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 // defaultNetworkPlugin is used for the default CNI configuration
@@ -291,16 +292,25 @@ func (c *criService) Run(ready func()) error {
 	// Set the server as initialized. GRPC services could start serving traffic.
 	c.initialized.Set()
 
+	fmt.Println("koukou ABFOPWEF")
+	log.G(context.Background()).Error("Koukou A")
 	if c.config.CniConfig.CNIDRA {
-		clientCfg, err := rest.InClusterConfig()
+		log.G(context.Background()).Error("Koukou B")
+		// clientCfg, err := rest.InClusterConfig()
+		clientCfg, err := clientcmd.BuildConfigFromFlags("", "/etc/kubernetes/kubelet.conf")
 		if err != nil {
+			log.G(context.Background()).Error("Koukou B", "failed to InClusterConfig", err)
 			return fmt.Errorf("failed to InClusterConfig: %w", err)
 		}
 
+		log.G(context.Background()).Error("Koukou C")
 		clientset, err := kubernetes.NewForConfig(clientCfg)
 		if err != nil {
+			log.G(context.Background()).Error("Koukou B", "failed to NewForConfig", err)
 			return fmt.Errorf("failed to NewForConfig: %w", err)
 		}
+
+		log.G(context.Background()).Error("Koukou D")
 
 		driverName := "poc.dra.networking"
 		nodeName, _ := os.Hostname()
@@ -315,8 +325,11 @@ func (c *criService) Run(ready func()) error {
 			memoryStore,
 		)
 		if err != nil {
+			log.G(context.Background()).Error("Koukou D", "failed to dra.Start", err)
 			return fmt.Errorf("failed to dra.Start: %w", err)
 		}
+
+		log.G(context.Background()).Error("Koukou E")
 
 		c.cni = cniv1.New(
 			driverName,

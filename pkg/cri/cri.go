@@ -17,6 +17,7 @@
 package cri
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -56,6 +57,8 @@ func init() {
 }
 
 func initCRIService(ic *plugin.InitContext) (interface{}, error) {
+	log.G(context.Background()).Info("KOUKOU 2")
+	fmt.Println("KOUKOU 2b")
 	ic.Meta.Platforms = []imagespec.Platform{platforms.DefaultSpec()}
 	ic.Meta.Exports = map[string]string{"CRIVersion": constants.CRIVersion, "CRIVersionAlpha": constants.CRIVersionAlpha}
 	ctx := ic.Context

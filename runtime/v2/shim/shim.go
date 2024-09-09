@@ -397,6 +397,10 @@ func run(ctx context.Context, manager Manager, initFunc Init, name string, confi
 		ttrpcUnaryInterceptors = []ttrpc.UnaryServerInterceptor{}
 	)
 	plugins := plugin.Graph(func(*plugin.Registration) bool { return false })
+	log.G(ctx).Infof("KOUKOU 3D")
+	log.G(ctx).Info("KOUKOU 3")
+	log.G(context.Background()).Info("KOUKOU 3a")
+	fmt.Println("KOUKOU 3b")
 	for _, p := range plugins {
 		id := p.URI()
 		log.G(ctx).WithField("type", p.Type).Infof("loading plugin %q...", id)

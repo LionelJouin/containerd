@@ -99,7 +99,7 @@ func (c *Config) GetVersion() int {
 func (c *Config) ValidateV2() error {
 	version := c.GetVersion()
 	if version < 2 {
-		logrus.Warnf("containerd config version `%d` has been deprecated and will be converted on each startup in containerd v2.0, "+
+		logrus.Warnf("containerd config version KOUKOU `%d` has been deprecated and will be converted on each startup in containerd v2.0, "+
 			"use `containerd config migrate` after upgrading to containerd 2.0 to avoid conversion on startup", version)
 		return nil
 	}
