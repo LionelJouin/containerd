@@ -60,6 +60,7 @@ import (
 	cniv1 "github.com/kubernetes-sigs/multi-network/pkg/cni/v1"
 	"github.com/kubernetes-sigs/multi-network/pkg/dra"
 	"github.com/kubernetes-sigs/multi-network/pkg/store"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -166,6 +167,7 @@ type criService struct {
 	runtimeFeatures *runtime.RuntimeFeatures
 
 	cni *cniv1.CNI
+	mu  sync.Mutex
 }
 
 type CRIServiceOptions struct {
@@ -257,44 +259,6 @@ func NewCRIService(options *CRIServiceOptions) (CRIService, runtime.RuntimeServi
 	c.runtimeFeatures = &runtime.RuntimeFeatures{
 		SupplementalGroupsPolicy: true,
 	}
-
-	if c.config.CniConfig.CNIDRA {
-		clientCfg, err := clientcmd.BuildConfigFromFlags("", "/etc/kubernetes/kubelet.conf")
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to InClusterConfig: %w", err)
-		}
-
-		clientset, err := kubernetes.NewForConfig(clientCfg)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to NewForConfig: %w", err)
-		}
-
-		driverName := "poc.dra.networking"
-		nodeName, _ := os.Hostname()
-
-		memoryStore := store.NewMemory()
-
-		_, err = dra.Start(
-			ctx,
-			driverName,
-			nodeName,
-			clientset,
-			memoryStore,
-		)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to dra.Start: %w", err)
-		}
-
-		c.cni = cniv1.New(
-			driverName,
-			"/",
-			[]string{"/opt/cni/bin"},
-			"/var/lib/cni/multi-network",
-			clientset,
-			memoryStore,
-		)
-	}
-
 	return c, c, nil
 }
 
@@ -355,6 +319,58 @@ func (c *criService) Run(ready func()) error {
 
 	// Set the server as initialized. GRPC services could start serving traffic.
 	c.initialized.Store(true)
+
+	if c.config.CniConfig.CNIDRA {
+		go func() {
+			_ = wait.PollUntilContextTimeout(context.Background(), 1*time.Second, 90*time.Second, true, func(context.Context) (bool, error) {
+				clientCfg, err := clientcmd.BuildConfigFromFlags("", "/etc/kubernetes/kubelet.conf")
+				if err != nil {
+					log.L.Errorf("failed to InClusterConfig: %v", err)
+					// return fmt.Errorf("failed to InClusterConfig: %w", err)
+					return false, nil
+				}
+
+				clientset, err := kubernetes.NewForConfig(clientCfg)
+				if err != nil {
+					log.L.Errorf("failed to NewForConfig: %v", err)
+					// return fmt.Errorf("failed to NewForConfig: %w", err)
+					return false, nil
+				}
+
+				driverName := "poc.dra.networking"
+				nodeName, _ := os.Hostname()
+
+				memoryStore := store.NewMemory()
+
+				_, err = dra.Start(
+					context.TODO(),
+					driverName,
+					nodeName,
+					clientset,
+					memoryStore,
+				)
+				if err != nil {
+					log.L.Errorf("failed to dra.Start: %v", err)
+					// return fmt.Errorf("failed to dra.Start: %w", err)
+					return false, nil
+				}
+
+				c.mu.Lock()
+				c.cni = cniv1.New(
+					driverName,
+					"/",
+					[]string{"/opt/cni/bin"},
+					"/var/lib/cni/multi-network",
+					clientset,
+					memoryStore,
+				)
+				c.mu.Unlock()
+
+				return true, nil
+			})
+		}()
+	}
+
 	ready()
 
 	var eventMonitorErr, streamServerErr, cniNetConfMonitorErr error
