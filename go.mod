@@ -160,7 +160,7 @@ require (
 	tags.cncf.io/container-device-interface/specs-go v0.8.0 // indirect
 )
 
-replace github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7
+replace github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240910124927-1016451812e5
 
 replace k8s.io/api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/api v0.0.0-20240906134808-d45448c4d371
 

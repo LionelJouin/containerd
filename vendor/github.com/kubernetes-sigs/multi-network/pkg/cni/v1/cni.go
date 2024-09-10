@@ -14,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/klog/v2"
 )
 
 type PodResourceStore interface {
@@ -61,6 +62,8 @@ func (cni *CNI) AttachNetworks(
 ) error {
 	claims := cni.podResourceStore.Get(types.UID(podUID))
 
+	klog.Infof("cni.AttachNetworks: attach networks on pod %s (%s)", podName, podUID)
+
 	for _, claim := range claims {
 		err := cni.handleClaim(
 			ctx,
@@ -72,7 +75,7 @@ func (cni *CNI) AttachNetworks(
 			claim,
 		)
 		if err != nil {
-			continue
+			return err
 		}
 	}
 
@@ -97,10 +100,12 @@ func (cni *CNI) handleClaim(
 		return nil
 	}
 
+	klog.Infof("cni.handleClaim: attach network (claim: %s) on pod %s (%s)", claim.Name, podName, podUID)
+
 	cniParameters := &Parameters{}
 	err := json.Unmarshal(claim.Status.Allocation.Devices.Config[0].Opaque.Parameters.Raw, cniParameters)
 	if err != nil {
-		return nil
+		return fmt.Errorf("cni.handleClaim: failed to json.Unmarshal Opaque.Parameters: %v", err)
 	}
 
 	result, err := cni.add(
@@ -118,12 +123,12 @@ func (cni *CNI) handleClaim(
 
 	resultBytes, err := json.Marshal(result)
 	if err != nil {
-		return fmt.Errorf("failed to json.Marshal result (%v): %v", result, err)
+		return fmt.Errorf("cni.handleClaim: failed to json.Marshal result (%v): %v", result, err)
 	}
 
 	cniResult, err := cni100.NewResultFromResult(result)
 	if err != nil {
-		return fmt.Errorf("failed to NewResultFromResult result (%v): %v", result, err)
+		return fmt.Errorf("cni.handleClaim: failed to NewResultFromResult result (%v): %v", result, err)
 	}
 
 	claim.Status.DeviceStatuses = append(claim.Status.DeviceStatuses, resourcev1alpha3.AllocatedDeviceStatus{
@@ -139,7 +144,7 @@ func (cni *CNI) handleClaim(
 
 	_, err = cni.kubeClient.ResourceV1alpha3().ResourceClaims(claim.GetNamespace()).UpdateStatus(ctx, claim, v1.UpdateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("cni.handleClaim: failed to update resource claim status (%v): %v", result, err)
 	}
 
 	return nil
@@ -169,12 +174,12 @@ func (cni *CNI) add(
 
 	confList, err := libcni.ConfListFromBytes([]byte(parameters.Config))
 	if err != nil {
-		return nil, fmt.Errorf("failed to ConfListFromBytes: %v", err)
+		return nil, fmt.Errorf("cni.add: failed to ConfListFromBytes: %v", err)
 	}
 
 	result, err := cni.cniConfig.AddNetworkList(ctx, confList, rt)
 	if err != nil {
-		return nil, fmt.Errorf("failed to AddNetwork: %v", err)
+		return nil, fmt.Errorf("cni.add: failed to AddNetwork: %v", err)
 	}
 
 	return result, nil

@@ -22,8 +22,8 @@ github.com/LionelJouin/kubernetes/staging/src/k8s.io/dynamic-resource-allocation
 github.com/LionelJouin/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20240906134808-d45448c4d371/go.mod h1:8TKePyIMbnq9XUPnf7wiE6+3PkPzZU1xCKuQeR1NLx8=
 github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubelet v0.0.0-20240906134808-d45448c4d371 h1:UoZLxpZwXEbn4iVHPmPe7aYB10+w7iSrkAaZYCsEnEY=
 github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubelet v0.0.0-20240906134808-d45448c4d371/go.mod h1:ZJLixS2GdAQIn0ZTxeVC9S9dNPSQ5yIVnm+gpL4Tb4o=
-github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7 h1:E3drLhoJGfsiUlXaO3MexDk01kLzRbAYNyk/rEsR1H8=
-github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7/go.mod h1:ZqQTiM9s9kMu9huFb6CbtGBFCdzosHy1VBOgORLgCzg=
+github.com/LionelJouin/multi-network v0.0.0-20240910124927-1016451812e5 h1:prt+TfaNQRHaNtB3CeBxpoea2obtv6eUPiJOxVGJOS0=
+github.com/LionelJouin/multi-network v0.0.0-20240910124927-1016451812e5/go.mod h1:ZqQTiM9s9kMu9huFb6CbtGBFCdzosHy1VBOgORLgCzg=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/Microsoft/hcsshim v0.12.6 h1:qEnZjoHXv+4/s0LmKZWE0/AiZmMWEIkFfWBSf1a0wlU=

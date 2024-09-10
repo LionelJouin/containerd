@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"time"
 
 	resourcev1alpha3 "k8s.io/api/resource/v1alpha3"
@@ -102,22 +101,16 @@ func (d *Driver) NodePrepareResources(ctx context.Context, request *drapb.NodePr
 				Error: err.Error(),
 			}
 		} else {
-			r := &drapb.NodePrepareResourceResponse{}
-			for _, device := range devices {
-				pbDevice := &drapb.Device{
-					PoolName:   device.PoolName,
-					DeviceName: device.DeviceName,
-				}
-				r.Devices = append(r.Devices, pbDevice)
+			resp.Claims[claimReq.UID] = &drapb.NodePrepareResourceResponse{
+				Devices: devices,
 			}
-			resp.Claims[claimReq.UID] = r
 		}
 	}
 	return resp, nil
 
 }
 
-func (d *Driver) nodePrepareResource(ctx context.Context, claimReq *drapb.Claim) ([]drapb.Device, error) {
+func (d *Driver) nodePrepareResource(ctx context.Context, claimReq *drapb.Claim) ([]*drapb.Device, error) {
 	// The plugin must retrieve the claim itself to get it in the version that it understands.
 	claim, err := d.kubeClient.ResourceV1alpha3().ResourceClaims(claimReq.Namespace).Get(ctx, claimReq.Name, metav1.GetOptions{})
 	if err != nil {
@@ -136,25 +129,20 @@ func (d *Driver) nodePrepareResource(ctx context.Context, claimReq *drapb.Claim)
 			continue
 		}
 
+		klog.Infof("nodePrepareResource: Claim Request (%s) reserved for pod %s (%s)", claimReq.UID, reserved.Name, reserved.UID)
 		d.podResourceStore.Add(reserved.UID, claim)
 	}
 
-	var devices []drapb.Device
+	var devices []*drapb.Device
 	for _, result := range claim.Status.Allocation.Devices.Results {
-		requestName := result.Request
-		for _, config := range claim.Status.Allocation.Devices.Config {
-			if config.Opaque == nil ||
-				config.Opaque.Driver != d.driverName ||
-				len(config.Requests) > 0 && !slices.Contains(config.Requests, requestName) {
-				continue
-			}
-		}
-		device := drapb.Device{
+		device := &drapb.Device{
 			PoolName:   result.Pool,
 			DeviceName: result.Device,
 		}
 		devices = append(devices, device)
 	}
+
+	klog.Infof("nodePrepareResource: Devices for Claim Request (%s) %#v", claimReq.UID, devices)
 
 	return devices, nil
 }

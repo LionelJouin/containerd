@@ -360,7 +360,7 @@ github.com/klauspost/compress/internal/cpuinfo
 github.com/klauspost/compress/internal/snapref
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
-# github.com/kubernetes-sigs/multi-network v0.0.1 => github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7
+# github.com/kubernetes-sigs/multi-network v0.0.1 => github.com/LionelJouin/multi-network v0.0.0-20240910124927-1016451812e5
 ## explicit; go 1.23.1
 github.com/kubernetes-sigs/multi-network/pkg/cni/v1
 github.com/kubernetes-sigs/multi-network/pkg/dra
@@ -1110,7 +1110,7 @@ tags.cncf.io/container-device-interface/pkg/parser
 # tags.cncf.io/container-device-interface/specs-go v0.8.0
 ## explicit; go 1.19
 tags.cncf.io/container-device-interface/specs-go
-# github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7
+# github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240910124927-1016451812e5
 # k8s.io/api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/api v0.0.0-20240906134808-d45448c4d371
 # k8s.io/apiextensions-apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apiextensions-apiserver v0.0.0-20240906134808-d45448c4d371
 # k8s.io/apimachinery => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apimachinery v0.0.0-20240906134808-d45448c4d371
