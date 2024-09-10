@@ -1,6 +1,6 @@
 module github.com/containerd/containerd/v2
 
-go 1.22.0
+go 1.23.1
 
 require (
 	dario.cat/mergo v1.0.1
@@ -40,6 +40,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.1
 	github.com/intel/goresctrl v0.7.0
 	github.com/klauspost/compress v1.17.9
+	github.com/kubernetes-sigs/multi-network v0.0.1
 	github.com/mdlayher/vsock v1.2.1
 	github.com/moby/locker v1.0.1
 	github.com/moby/sys/mountinfo v0.7.2
@@ -98,16 +99,23 @@ require (
 	github.com/go-jose/go-jose/v4 v4.0.2 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+	github.com/go-openapi/jsonreference v0.20.2 // indirect
+	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/imdario/mergo v0.3.6 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mdlayher/socket v0.4.1 // indirect
 	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/moby/spdystream v0.4.0 // indirect
@@ -121,6 +129,7 @@ require (
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stefanberger/go-pkcs11uri v0.0.0-20201008174630-78d3cae3a980 // indirect
 	github.com/syndtr/gocapability v0.0.0-20200815063812-42c35b437635 // indirect
 	github.com/vishvananda/netns v0.0.4 // indirect
@@ -131,7 +140,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.3.1 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611 // indirect
+	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/term v0.23.0 // indirect
@@ -143,8 +152,72 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.31.0 // indirect
 	k8s.io/apiserver v0.31.0 // indirect
+	k8s.io/dynamic-resource-allocation v0.31.0 // indirect
+	k8s.io/kube-openapi v0.0.0-20240827152857-f7e401e7b4c2 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 	tags.cncf.io/container-device-interface/specs-go v0.8.0 // indirect
 )
+
+replace github.com/kubernetes-sigs/multi-network => github.com/LionelJouin/multi-network v0.0.0-20240909073107-5e3fbd9c41a7
+
+replace k8s.io/api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/api v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apiextensions-apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apiextensions-apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apimachinery => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apimachinery v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cli-runtime => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cli-runtime v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/client-go => github.com/LionelJouin/kubernetes/staging/src/k8s.io/client-go v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cloud-provider => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cloud-provider v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cluster-bootstrap => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cluster-bootstrap v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/code-generator => github.com/LionelJouin/kubernetes/staging/src/k8s.io/code-generator v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/component-base => github.com/LionelJouin/kubernetes/staging/src/k8s.io/component-base v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/component-helpers => github.com/LionelJouin/kubernetes/staging/src/k8s.io/component-helpers v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/controller-manager => github.com/LionelJouin/kubernetes/staging/src/k8s.io/controller-manager v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cri-api => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cri-api v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/cri-client => github.com/LionelJouin/kubernetes/staging/src/k8s.io/cri-client v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/csi-translation-lib => github.com/LionelJouin/kubernetes/staging/src/k8s.io/csi-translation-lib v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/dynamic-resource-allocation => github.com/LionelJouin/kubernetes/staging/src/k8s.io/dynamic-resource-allocation v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/endpointslice => github.com/LionelJouin/kubernetes/staging/src/k8s.io/endpointslice v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kms => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kms v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-aggregator => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-aggregator v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-controller-manager => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-controller-manager v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-proxy => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-proxy v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kube-scheduler => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kube-scheduler v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kubectl => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubectl v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/kubelet => github.com/LionelJouin/kubernetes/staging/src/k8s.io/kubelet v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/metrics => github.com/LionelJouin/kubernetes/staging/src/k8s.io/metrics v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/mount-utils => github.com/LionelJouin/kubernetes/staging/src/k8s.io/mount-utils v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/pod-security-admission => github.com/LionelJouin/kubernetes/staging/src/k8s.io/pod-security-admission v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-apiserver => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-apiserver v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-cli-plugin => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-cli-plugin v0.0.0-20240906134808-d45448c4d371
+
+replace k8s.io/sample-controller => github.com/LionelJouin/kubernetes/staging/src/k8s.io/sample-controller v0.0.0-20240906134808-d45448c4d371
