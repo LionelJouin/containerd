@@ -1,6 +1,6 @@
 module github.com/containerd/containerd/v2
 
-go 1.23.0
+go 1.24.3
 
 require (
 	dario.cat/mergo v1.0.1
@@ -52,7 +52,7 @@ require (
 	github.com/moby/sys/userns v0.1.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.1
-	github.com/opencontainers/runtime-spec v1.2.1
+	github.com/opencontainers/runtime-spec v1.2.2-0.20250401095657-e935f995dd67
 	github.com/opencontainers/runtime-tools v0.9.1-0.20221107090550-2e043c6bd626
 	github.com/opencontainers/selinux v1.12.0
 	github.com/pelletier/go-toml/v2 v2.2.4
@@ -110,6 +110,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/knqyf263/go-plugin v0.9.0 // indirect
 	github.com/mdlayher/socket v0.5.1 // indirect
 	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mistifyio/go-zfs/v3 v3.0.1 // indirect
@@ -129,6 +130,7 @@ require (
 	github.com/smallstep/pkcs7 v0.1.1 // indirect
 	github.com/stefanberger/go-pkcs11uri v0.0.0-20230803200340-78284954bff6 // indirect
 	github.com/syndtr/gocapability v0.0.0-20200815063812-42c35b437635 // indirect
+	github.com/tetratelabs/wazero v1.9.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	go.opencensus.io v0.24.0 // indirect
@@ -166,3 +168,5 @@ exclude (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 )
+
+replace github.com/containerd/nri => github.com/klihub/nri v0.9.1-0.20250714080424-a999d9b2e8b2
