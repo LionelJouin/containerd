@@ -54,7 +54,7 @@ require (
 	github.com/moby/sys/userns v0.1.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.1
-	github.com/opencontainers/runtime-spec v1.2.1
+	github.com/opencontainers/runtime-spec v1.2.2-0.20250401095657-e935f995dd67
 	github.com/opencontainers/runtime-tools v0.9.1-0.20250523060157-0ea5ed0382a2
 	github.com/opencontainers/selinux v1.12.0
 	github.com/pelletier/go-toml/v2 v2.2.4
@@ -173,3 +173,5 @@ exclude (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 )
+
+replace github.com/containerd/nri => github.com/klihub/nri v0.9.1-0.20250714080424-a999d9b2e8b2

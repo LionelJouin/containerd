@@ -865,6 +865,13 @@ func (c *criContainer) GetCgroupsPath() string {
 	return c.spec.Linux.CgroupsPath
 }
 
+func (c *criContainer) GetLinuxNetworkDevices() map[string]*api.LinuxNetDevice {
+	if c.spec.Linux == nil {
+		return nil
+	}
+	return api.FromOCILinuxNetDevices(c.spec.Linux.NetDevices)
+}
+
 func (c *criContainer) GetPid() uint32 {
 	return c.pid
 }

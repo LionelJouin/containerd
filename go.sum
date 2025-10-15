@@ -59,8 +59,6 @@ github.com/containerd/imgcrypt/v2 v2.0.1 h1:gQcmeCKA97fAl0wlpq0itSY/PagFBsn4/mlK
 github.com/containerd/imgcrypt/v2 v2.0.1/go.mod h1:/qIJL8nxzdzMA2n5iYyyuIY36KfoVQWmgTWdfVtyebM=
 github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
 github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
-github.com/containerd/nri v0.10.0 h1:bt2NzfvlY6OJE0i+fB5WVeGQEycxY7iFVQpEbh7J3Go=
-github.com/containerd/nri v0.10.0/go.mod h1:5VyvLa/4uL8FjyO8nis1UjbCutXDpngil17KvBSL6BU=
 github.com/containerd/otelttrpc v0.1.0 h1:UOX68eVTE8H/T45JveIg+I22Ev2aFj4qPITCmXsskjw=
 github.com/containerd/otelttrpc v0.1.0/go.mod h1:XhoA2VvaGPW1clB2ULwrBZfXVuEWuyOd2NUD1IM0yTg=
 github.com/containerd/platforms v1.0.0-rc.1 h1:83KIq4yy1erSRgOVHNk1HYdPvzdJ5CnsWaRoJX4C41E=
@@ -202,6 +200,8 @@ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
 github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
+github.com/klihub/nri v0.9.1-0.20250714080424-a999d9b2e8b2 h1:v1hoL4cgr65TUpv4iFWI7S5jdCxBFSNgqASkVbqXQ1s=
+github.com/klihub/nri v0.9.1-0.20250714080424-a999d9b2e8b2/go.mod h1:VcO45nHrkZeikhEVso7ewRvk0kUEg9oIs+Twvp8zxL8=
 github.com/knqyf263/go-plugin v0.9.0 h1:CQs2+lOPIlkZVtcb835ZYDEoyyWJWLbSTWeCs0EwTwI=
 github.com/knqyf263/go-plugin v0.9.0/go.mod h1:2z5lCO1/pez6qGo8CvCxSlBFSEat4MEp1DrnA+f7w8Q=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
@@ -264,8 +264,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
 github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
-github.com/opencontainers/runtime-spec v1.2.1 h1:S4k4ryNgEpxW1dzyqffOmhI1BHYcjzU8lpJfSlR0xww=
-github.com/opencontainers/runtime-spec v1.2.1/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
+github.com/opencontainers/runtime-spec v1.2.2-0.20250401095657-e935f995dd67 h1:Q+KewUGTMamIe6Q39xCD/T1NC1POmaTlWnhjikCrZHA=
+github.com/opencontainers/runtime-spec v1.2.2-0.20250401095657-e935f995dd67/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
 github.com/opencontainers/runtime-tools v0.9.1-0.20250523060157-0ea5ed0382a2 h1:2xZEHOdeQBV6PW8ZtimN863bIOl7OCW/X10K0cnxKeA=
 github.com/opencontainers/runtime-tools v0.9.1-0.20250523060157-0ea5ed0382a2/go.mod h1:MXdPzqAA8pHC58USHqNCSjyLnRQ6D+NjbpP+02Z1U/0=
 github.com/opencontainers/selinux v1.12.0 h1:6n5JV4Cf+4y0KNXW48TLj5DwfXpvWlxXplUkdTrmPb8=
