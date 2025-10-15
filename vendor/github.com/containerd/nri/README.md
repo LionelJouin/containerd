@@ -181,7 +181,6 @@ The following pieces of container metadata are available to plugins in NRI:
   - mounts
   - OCI hooks
   - rlimits
-  - I/O priority
   - linux
     - namespace IDs
     - devices
@@ -206,8 +205,6 @@ The following pieces of container metadata are available to plugins in NRI:
         - cpuset memory
       - Block I/O class
       - RDT class
-      - Unified cgroup v2 parameter map
-    - Linux seccomp profile and policy
   - container (init) process ID
   - container (init process) exit status
   - timestamp of container creation
@@ -217,7 +214,7 @@ The following pieces of container metadata are available to plugins in NRI:
   - container exit status message (human readable)
 
 Apart from data identifying the container, these pieces of information
-represent the corresponding data in the container's [OCI Spec](https://github.com/opencontainers/runtime-spec/blob/main/spec.md).
+represent the corresponding data in the container's OCI Spec.
 
 ### Container Adjustment
 
@@ -230,7 +227,6 @@ container parameters:
   - environment variables
   - OCI hooks
   - rlimits
-  - I/O priority
   - linux
     - devices
     - resources
@@ -254,9 +250,6 @@ container parameters:
         - cpuset memory
       - Block I/O class
       - RDT class
-      - Unified cgroup v2 parameter map
-      - Linux seccomp policy
-    - Linux namespaces
 
 ### Container Updates
 
@@ -288,7 +281,6 @@ can be updated this way:
       - cpuset memory
     - Block I/O class
     - RDT class
-    - Unified cgroup v2 parameter map
 
 ### Container Adjustment Validation
 
@@ -347,20 +339,11 @@ selectively configured to
 1. Reject OCI Hook injection: Reject any adjustment which tries to inject
 OCI Hooks into a container.
 
-2. Reject Linux seccomp policy adjustment: Reject any adjustment which tries
-to set/override Linux seccomp policy of a container. There are separate controls
-for rejecting adjustment of the seccomp policy profile based on the type of policy
-profile set for the container. These types include the runtime default seccomp
-policy profile, a custom policy profile, and unconfined security profiles.
-
-3. Reject Linux Namespace adjustment: Reject any adjustment which tries to
-alter Linux namespaces of a container.
-
-4. Verify global mandatory plugins: Verify that all configured mandatory
+2. Verify global mandatory plugins: Verify that all configured mandatory
 plugins are present and have processed a container. Otherwise reject the
 creation of the container.
 
-5. Verify annotated mandatory plugins: Verify that an annotated set of
+3. Verify annotated mandatory plugins: Verify that an annotated set of
 container-specific mandatory plugins are present and have processed a
 container. Otherwise reject the creation of the container.
 
@@ -369,11 +352,11 @@ allows one to deploy mandatory plugins as containers themselves.
 
 #### Default Validation Scope
 
-Currently only OCI hook injection, Linux seccomp policy and Linux namespace
-adjustment can be restricted using the default validator. However, this probably
-will change in the future. Especially when NRI is extended with control over more
-container parameters. If newly added controls will have security implications,
-expect corresponding configurable restrictions in the default validator.
+Currently only OCI hook injection can be restricted using the default
+validator. However, this probably will change in the future. Especially
+when NRI is extended with control over new container parameters. If such
+parameters will have security implications, corresponding configurable
+restrictions will be introduced to the default validator.
 
 ## Runtime Adaptation
 
@@ -414,27 +397,12 @@ The following sample plugins exist for NRI:
   - [differ](plugins/differ)
   - [device injector](plugins/device-injector)
   - [network device injector](plugins/network-device-injector)
-  - [network logger](plugins/network-logger)
   - [OCI hook injector](plugins/hook-injector)
   - [ulimit adjuster](plugins/ulimit-adjuster)
   - [NRI v0.1.0 plugin adapter](plugins/v010-adapter)
-  - [WebAssembly plugin](plugins/wasm)
-  - [template](plugins/template)
 
 Please see the documentation of these plugins for further details
 about what and how each of these plugins can be used for.
-
-Ready-built container images for these plugins are available at
-ghcr.io/containerd/nri/plugins/<plugin>.
-
-Minimal [kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
-overlays for deploying the sample are available at
-[contrib/kustomize](contrib/kustomize). See plugin-specific documentation for
-detailed examples.
-
-> [!CAUTION]
-> Use at your own risk. The kustomize overlays provided in this repository is
-> offered as a convenience for testing and demonstration purposes.
 
 ### WebAssembly support
 
@@ -508,7 +476,7 @@ nri is a containerd sub-project, licensed under the [Apache 2.0 license](./LICEN
 As a containerd sub-project, you will find the:
 
  * [Project governance](https://github.com/containerd/project/blob/main/GOVERNANCE.md),
- * [Maintainers](./MAINTAINERS),
+ * [Maintainers](https://github.com/containerd/project/blob/main/MAINTAINERS),
  * and [Contributing guidelines](https://github.com/containerd/project/blob/main/CONTRIBUTING.md)
 
 information in our [`containerd/project`](https://github.com/containerd/project) repository.

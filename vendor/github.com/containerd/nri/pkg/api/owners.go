@@ -53,10 +53,6 @@ func (o *OwningPlugins) ClaimDevice(id, path, plugin string) error {
 	return o.mustOwnersFor(id).ClaimDevice(path, plugin)
 }
 
-func (o *OwningPlugins) ClaimNamespace(id, typ, plugin string) error {
-	return o.mustOwnersFor(id).ClaimNamespace(typ, plugin)
-}
-
 func (o *OwningPlugins) ClaimCdiDevice(id, name, plugin string) error {
 	return o.mustOwnersFor(id).ClaimCdiDevice(name, plugin)
 }
@@ -161,12 +157,8 @@ func (o *OwningPlugins) ClaimRlimit(id, typ, plugin string) error {
 	return o.mustOwnersFor(id).ClaimRlimit(typ, plugin)
 }
 
-func (o *OwningPlugins) ClaimIOPriority(id, plugin string) error {
-	return o.mustOwnersFor(id).ClaimIOPriority(plugin)
-}
-
-func (o *OwningPlugins) ClaimSeccompPolicy(id, plugin string) error {
-	return o.mustOwnersFor(id).ClaimSeccompPolicy(plugin)
+func (o *OwningPlugins) ClaimLinuxNetDevice(id, path, plugin string) error {
+	return o.mustOwnersFor(id).ClaimLinuxNetDevice(path, plugin)
 }
 
 func (o *OwningPlugins) ClearAnnotation(id, key, plugin string) {
@@ -189,6 +181,10 @@ func (o *OwningPlugins) ClearArgs(id, plugin string) {
 	o.mustOwnersFor(id).ClearArgs(plugin)
 }
 
+func (o *OwningPlugins) ClearLinuxNetDevice(id, path, plugin string) {
+	o.mustOwnersFor(id).ClearLinuxNetDevice(path, plugin)
+}
+
 func (o *OwningPlugins) AnnotationOwner(id, key string) (string, bool) {
 	return o.ownersFor(id).compoundOwner(Field_Annotations.Key(), key)
 }
@@ -203,14 +199,6 @@ func (o *OwningPlugins) HooksOwner(id string) (string, bool) {
 
 func (o *OwningPlugins) DeviceOwner(id, path string) (string, bool) {
 	return o.ownersFor(id).compoundOwner(Field_Devices.Key(), path)
-}
-
-func (o *OwningPlugins) NamespaceOwner(id, path string) (string, bool) {
-	return o.ownersFor(id).compoundOwner(Field_Namespace.Key(), path)
-}
-
-func (o *OwningPlugins) NamespaceOwners(id string) (map[string]string, bool) {
-	return o.ownersFor(id).compoundOwnerMap(Field_Namespace.Key())
 }
 
 func (o *OwningPlugins) EnvOwner(id, name string) (string, bool) {
@@ -313,12 +301,8 @@ func (o *OwningPlugins) RlimitOwner(id, typ string) (string, bool) {
 	return o.ownersFor(id).compoundOwner(Field_Rlimits.Key(), typ)
 }
 
-func (o *OwningPlugins) IOPriorityOwner(id string) (string, bool) {
-	return o.ownersFor(id).simpleOwner(Field_IoPriority.Key())
-}
-
-func (o *OwningPlugins) SeccompPolicyOwner(id string) (string, bool) {
-	return o.ownersFor(id).simpleOwner(Field_SeccompPolicy.Key())
+func (o *OwningPlugins) LinuxNetDeviceOwner(id, path string) (string, bool) {
+	return o.ownersFor(id).compoundOwner(Field_LinuxNetDevices.Key(), path)
 }
 
 func (o *OwningPlugins) mustOwnersFor(id string) *FieldOwners {
@@ -431,10 +415,6 @@ func (f *FieldOwners) ClaimCdiDevice(name, plugin string) error {
 	return f.claimCompound(Field_CdiDevices.Key(), name, plugin)
 }
 
-func (f *FieldOwners) ClaimNamespace(typ, plugin string) error {
-	return f.claimCompound(Field_Namespace.Key(), typ, plugin)
-}
-
 func (f *FieldOwners) ClaimEnv(name, plugin string) error {
 	return f.claimCompound(Field_Env.Key(), name, plugin)
 }
@@ -535,12 +515,8 @@ func (f *FieldOwners) ClaimRlimit(typ, plugin string) error {
 	return f.claimCompound(Field_Rlimits.Key(), typ, plugin)
 }
 
-func (f *FieldOwners) ClaimIOPriority(plugin string) error {
-	return f.claimSimple(Field_IoPriority.Key(), plugin)
-}
-
-func (f *FieldOwners) ClaimSeccompPolicy(plugin string) error {
-	return f.claimSimple(Field_SeccompPolicy.Key(), plugin)
+func (f *FieldOwners) ClaimLinuxNetDevice(path, plugin string) error {
+	return f.claimCompound(Field_LinuxNetDevices.Key(), path, plugin)
 }
 
 func (f *FieldOwners) clearCompound(field int32, key, plugin string) {
@@ -577,22 +553,13 @@ func (f *FieldOwners) ClearArgs(plugin string) {
 	f.clearSimple(Field_Args.Key(), plugin)
 }
 
+func (f *FieldOwners) ClearLinuxNetDevice(key, plugin string) {
+	f.clearCompound(Field_LinuxNetDevices.Key(), key, plugin)
+}
+
 func (f *FieldOwners) Conflict(field int32, plugin, other string, qualifiers ...string) error {
 	return fmt.Errorf("plugins %q and %q both tried to set %s",
 		plugin, other, qualify(field, qualifiers...))
-}
-
-func (f *FieldOwners) compoundOwnerMap(field int32) (map[string]string, bool) {
-	if f == nil {
-		return nil, false
-	}
-
-	m, ok := f.Compound[field]
-	if !ok {
-		return nil, false
-	}
-
-	return m.Owners, true
 }
 
 func (f *FieldOwners) compoundOwner(field int32, key string) (string, bool) {
@@ -628,10 +595,6 @@ func (f *FieldOwners) MountOwner(destination string) (string, bool) {
 
 func (f *FieldOwners) DeviceOwner(path string) (string, bool) {
 	return f.compoundOwner(Field_Devices.Key(), path)
-}
-
-func (f *FieldOwners) NamespaceOwner(typ string) (string, bool) {
-	return f.compoundOwner(Field_Devices.Key(), typ)
 }
 
 func (f *FieldOwners) EnvOwner(name string) (string, bool) {

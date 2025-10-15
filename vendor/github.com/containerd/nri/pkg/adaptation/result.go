@@ -18,7 +18,6 @@ package adaptation
 
 import (
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 
@@ -79,8 +78,8 @@ func collectCreateContainerResult(request *CreateContainerRequest) *result {
 	if request.Container.Linux.Resources.Unified == nil {
 		request.Container.Linux.Resources.Unified = map[string]string{}
 	}
-	if request.Container.Linux.Namespaces == nil {
-		request.Container.Linux.Namespaces = []*LinuxNamespace{}
+	if request.Container.Linux.NetDevices == nil {
+		request.Container.Linux.NetDevices = map[string]*LinuxNetDevice{}
 	}
 
 	return &result{
@@ -103,7 +102,7 @@ func collectCreateContainerResult(request *CreateContainerRequest) *result {
 						HugepageLimits: []*HugepageLimit{},
 						Unified:        map[string]string{},
 					},
-					Namespaces: []*LinuxNamespace{},
+					NetDevices: map[string]*LinuxNetDevice{},
 				},
 			},
 		},
@@ -226,13 +225,7 @@ func (r *result) adjust(rpl *ContainerAdjustment, plugin string) error {
 		if err := r.adjustOomScoreAdj(rpl.Linux.OomScoreAdj, plugin); err != nil {
 			return err
 		}
-		if err := r.adjustIOPriority(rpl.Linux.IoPriority, plugin); err != nil {
-			return err
-		}
-		if err := r.adjustSeccompPolicy(rpl.Linux.SeccompPolicy, plugin); err != nil {
-			return err
-		}
-		if err := r.adjustNamespaces(rpl.Linux.Namespaces, plugin); err != nil {
+		if err := r.adjustLinuxNetDevices(rpl.Linux.NetDevices, plugin); err != nil {
 			return err
 		}
 	}
@@ -414,39 +407,6 @@ func (r *result) adjustDevices(devices []*LinuxDevice, plugin string) error {
 
 	// finally, apply additions/modifications to plugin container creation request
 	create.Container.Linux.Devices = append(create.Container.Linux.Devices, add...)
-
-	return nil
-}
-
-func (r *result) adjustNamespaces(namespaces []*LinuxNamespace, plugin string) error {
-	if len(namespaces) == 0 {
-		return nil
-	}
-
-	create, id := r.request.create, r.request.create.Container.Id
-
-	creatensmap := map[string]*LinuxNamespace{}
-	for _, n := range create.Container.Linux.Namespaces {
-		creatensmap[n.Type] = n
-	}
-
-	for _, n := range namespaces {
-		if n == nil {
-			continue
-		}
-		key, marked := n.IsMarkedForRemoval()
-		if err := r.owners.ClaimNamespace(id, key, plugin); err != nil {
-			return err
-		}
-		if marked {
-			delete(creatensmap, key)
-		} else {
-			creatensmap[key] = n
-		}
-		r.reply.adjust.Linux.Namespaces = append(r.reply.adjust.Linux.Namespaces, n)
-	}
-
-	create.Container.Linux.Namespaces = slices.Collect(maps.Values(creatensmap))
 
 	return nil
 }
@@ -749,11 +709,6 @@ func (r *result) adjustResources(resources *LinuxResources, plugin string) error
 		reply.HugepageLimits = append(reply.HugepageLimits, l)
 	}
 
-	for _, d := range resources.Devices {
-		container.Devices = append(container.Devices, d)
-		reply.Devices = append(reply.Devices, d)
-	}
-
 	if len(resources.Unified) != 0 {
 		for k, v := range resources.Unified {
 			if err := r.owners.ClaimCgroupsUnified(id, k, plugin); err != nil {
@@ -825,39 +780,6 @@ func (r *result) adjustOomScoreAdj(OomScoreAdj *OptionalInt, plugin string) erro
 	return nil
 }
 
-func (r *result) adjustIOPriority(priority *LinuxIOPriority, plugin string) error {
-	if priority == nil {
-		return nil
-	}
-
-	create, id := r.request.create, r.request.create.Container.Id
-
-	if err := r.owners.ClaimIOPriority(id, plugin); err != nil {
-		return err
-	}
-
-	create.Container.Linux.IoPriority = priority
-	r.reply.adjust.Linux.IoPriority = priority
-
-	return nil
-}
-
-func (r *result) adjustSeccompPolicy(adjustment *LinuxSeccomp, plugin string) error {
-	if adjustment == nil {
-		return nil
-	}
-	create, id := r.request.create, r.request.create.Container.Id
-
-	if err := r.owners.ClaimSeccompPolicy(id, plugin); err != nil {
-		return err
-	}
-
-	create.Container.Linux.SeccompPolicy = adjustment
-	r.reply.adjust.Linux.SeccompPolicy = adjustment
-
-	return nil
-}
-
 func (r *result) adjustRlimits(rlimits []*POSIXRlimit, plugin string) error {
 	create, id, adjust := r.request.create, r.request.create.Container.Id, r.reply.adjust
 	for _, l := range rlimits {
@@ -868,6 +790,41 @@ func (r *result) adjustRlimits(rlimits []*POSIXRlimit, plugin string) error {
 		create.Container.Rlimits = append(create.Container.Rlimits, l)
 		adjust.Rlimits = append(adjust.Rlimits, l)
 	}
+	return nil
+}
+
+func (r *result) adjustLinuxNetDevices(devices map[string]*LinuxNetDevice, plugin string) error {
+	if len(devices) == 0 {
+		return nil
+	}
+
+	create, id := r.request.create, r.request.create.Container.Id
+	del := map[string]struct{}{}
+	for k := range devices {
+		if key, marked := IsMarkedForRemoval(k); marked {
+			del[key] = struct{}{}
+			delete(devices, k)
+		}
+	}
+
+	for k, v := range devices {
+		if _, ok := del[k]; ok {
+			r.owners.ClearLinuxNetDevice(id, k, plugin)
+			delete(create.Container.Linux.NetDevices, k)
+			r.reply.adjust.Linux.NetDevices[MarkForRemoval(k)] = nil
+		}
+		if err := r.owners.ClaimLinuxNetDevice(id, k, plugin); err != nil {
+			return err
+		}
+		create.Container.Linux.NetDevices[k] = v
+		r.reply.adjust.Linux.NetDevices[k] = v
+		delete(del, k)
+	}
+
+	for k := range del {
+		r.reply.adjust.Linux.NetDevices[MarkForRemoval(k)] = nil
+	}
+
 	return nil
 }
 

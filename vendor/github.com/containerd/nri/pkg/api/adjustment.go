@@ -147,18 +147,22 @@ func (a *ContainerAdjustment) AddCDIDevice(d *CDIDevice) {
 	a.CDIDevices = append(a.CDIDevices, d) // TODO: should we dup d here ?
 }
 
-// AddOrReplaceNamespace records the addition or replacement of the given namespace to a container.
-func (a *ContainerAdjustment) AddOrReplaceNamespace(n *LinuxNamespace) {
-	a.initLinuxNamespaces()
-	a.Linux.Namespaces = append(a.Linux.Namespaces, n) // TODO: should we dup n here ?
+// AddLinuxNetDevice records the addition of the given network device to a container.
+func (a *ContainerAdjustment) AddLinuxNetDevice(hostDev string, d *LinuxNetDevice) {
+	if d == nil {
+		return
+	}
+	a.initLinuxNetDevices()
+	a.Linux.NetDevices[hostDev] = d
 }
 
-// RemoveNamespace records the removal of the given namespace from a container.
-func (a *ContainerAdjustment) RemoveNamespace(n *LinuxNamespace) {
-	a.initLinuxNamespaces()
-	a.Linux.Namespaces = append(a.Linux.Namespaces, &LinuxNamespace{
-		Type: MarkForRemoval(n.Type),
-	})
+// RemoveNetLinuxDevice records the removal of a network device from a container.
+// Normally it is an error for a plugin to try and alter a network device
+// touched by another container. However, this is not an error if
+// the plugin removes that device prior to touching it.
+func (a *ContainerAdjustment) RemoveLinuxNetDevice(hostDev string) {
+	a.initLinuxNetDevices()
+	a.Linux.NetDevices[MarkForRemoval(hostDev)] = nil
 }
 
 // SetLinuxMemoryLimit records setting the memory limit for a container.
@@ -297,18 +301,6 @@ func (a *ContainerAdjustment) SetLinuxOomScoreAdj(value *int) {
 	a.Linux.OomScoreAdj = Int(value) // using Int(value) from ./options.go to optionally allocate a pointer to normalized copy of value
 }
 
-// SetLinuxIOPriority records setting the I/O priority for a container.
-func (a *ContainerAdjustment) SetLinuxIOPriority(ioprio *LinuxIOPriority) {
-	a.initLinux()
-	a.Linux.IoPriority = ioprio
-}
-
-// SetLinuxSeccompPolicy overrides the container seccomp policy with the given arguments.
-func (a *ContainerAdjustment) SetLinuxSeccompPolicy(seccomp *LinuxSeccomp) {
-	a.initLinux()
-	a.Linux.SeccompPolicy = seccomp
-}
-
 //
 // Initializing a container adjustment and container update.
 //
@@ -334,13 +326,6 @@ func (a *ContainerAdjustment) initRlimits() {
 func (a *ContainerAdjustment) initLinux() {
 	if a.Linux == nil {
 		a.Linux = &LinuxContainerAdjustment{}
-	}
-}
-
-func (a *ContainerAdjustment) initLinuxNamespaces() {
-	a.initLinux()
-	if a.Linux.Namespaces == nil {
-		a.Linux.Namespaces = []*LinuxNamespace{}
 	}
 }
 
@@ -376,5 +361,12 @@ func (a *ContainerAdjustment) initLinuxResourcesUnified() {
 	a.initLinuxResources()
 	if a.Linux.Resources.Unified == nil {
 		a.Linux.Resources.Unified = make(map[string]string)
+	}
+}
+
+func (a *ContainerAdjustment) initLinuxNetDevices() {
+	a.initLinux()
+	if a.Linux.NetDevices == nil {
+		a.Linux.NetDevices = make(map[string]*LinuxNetDevice)
 	}
 }

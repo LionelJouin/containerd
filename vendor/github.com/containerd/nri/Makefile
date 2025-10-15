@@ -29,8 +29,6 @@ GO_LINT    := golint -set_exit_status
 GO_FMT     := gofmt
 GO_VET     := $(GO_CMD) vet
 
-GO_BUILD_FLAGS ?=
-
 GO_MODULES := $(shell $(GO_CMD) list ./...)
 
 GOLANG_CILINT := golangci-lint
@@ -49,9 +47,8 @@ PLUGINS := \
 	$(BIN_PATH)/ulimit-adjuster \
 	$(BIN_PATH)/v010-adapter \
 	$(BIN_PATH)/template \
-	$(BIN_PATH)/wasm \
-	$(BIN_PATH)/network-device-injector \
-	$(BIN_PATH)/network-logger
+	$(BIN_PATH)/wasm
+
 
 ifneq ($(V),1)
   Q := @
@@ -70,8 +67,6 @@ clean: clean-plugins
 allclean: clean clean-cache
 
 test: test-gopkgs
-
-FORCE:
 
 #
 # build targets
@@ -102,14 +97,38 @@ clean-cache:
 # plugins build targets
 #
 
-$(BIN_PATH)/% build/bin/%: FORCE
+$(BIN_PATH)/logger: $(wildcard plugins/logger/*.go)
 	$(Q)echo "Building $@..."; \
-	$(GO_BUILD) -C plugins/$* -o $(abspath $@) $(GO_BUILD_FLAGS) .
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
 
-$(BIN_PATH)/wasm build/bin/wasm: FORCE
+$(BIN_PATH)/device-injector: $(wildcard plugins/device-injector/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/hook-injector: $(wildcard plugins/hook-injector/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/differ: $(wildcard plugins/differ/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/ulimit-adjuster: $(wildcard plugins/ulimit-adjuster/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/v010-adapter: $(wildcard plugins/v010-adapter/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/template: $(wildcard plugins/template/*.go)
+	$(Q)echo "Building $@..."; \
+	cd $(dir $<) && $(GO_BUILD) -o $@ .
+
+$(BIN_PATH)/wasm: $(wildcard plugins/wasm/*.go)
 	$(Q)echo "Building $@..."; \
 	mkdir -p $(BIN_PATH) && \
-	GOOS=wasip1 GOARCH=wasm $(GO_BUILD) -C plugins/wasm -o $(abspath $@) $(GO_BUILD_FLAGS) -buildmode=c-shared .
+	cd $(dir $<) && GOOS=wasip1 GOARCH=wasm $(GO_BUILD) -o $@ -buildmode=c-shared .
 
 #
 # test targets

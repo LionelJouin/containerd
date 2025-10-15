@@ -33,7 +33,6 @@ func FromOCILinuxResources(o *rspec.LinuxResources, _ map[string]string) *LinuxR
 			Limit:            Int64(m.Limit),
 			Reservation:      Int64(m.Reservation),
 			Swap:             Int64(m.Swap),
-			Kernel:           Int64(m.Kernel),
 			KernelTcp:        Int64(m.KernelTCP),
 			Swappiness:       UInt64(m.Swappiness),
 			DisableOomKiller: Bool(m.DisableOOMKiller),
@@ -189,15 +188,6 @@ func (r *LinuxResources) Copy() *LinuxResources {
 	}
 	o.BlockioClass = String(r.BlockioClass)
 	o.RdtClass = String(r.RdtClass)
-	for _, d := range r.Devices {
-		o.Devices = append(o.Devices, &LinuxDeviceCgroup{
-			Allow:  d.Allow,
-			Type:   d.Type,
-			Access: d.Access,
-			Major:  Int64(d.Major),
-			Minor:  Int64(d.Minor),
-		})
-	}
 
 	return o
 }
